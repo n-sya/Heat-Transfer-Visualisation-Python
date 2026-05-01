@@ -1,0 +1,65 @@
+# Heat Transfer Simulation (Python)
+
+This project models **transient heat conduction in a cylindrical resistor** using two numerical methods:
+
+- Explicit Finite Difference Method (FDM)
+- Implicit Crank–Nicolson Method
+
+It includes internal heat generation, convective boundary conditions, and visualisation of the temperature distribution over time.
+
+---
+
+## Overview
+
+The simulation solves the **radial heat equation in cylindrical coordinates**, accounting for:
+
+- Internal heat generation within the material  
+- Symmetry at the centreline (Neumann boundary condition)  
+- Convective heat loss at the outer surface (Robin boundary condition)  
+
+The project demonstrates how different numerical schemes affect **stability, accuracy, and computational behaviour**.
+
+---
+
+## Methods Implemented
+
+### Explicit Finite Difference Method
+- Time-marching scheme  
+- Simple and intuitive implementation  
+- Stability governed by the **Courant condition**
+
+### Crank–Nicolson Method (Implicit)
+- Semi-implicit scheme (unconditionally stable)  
+- Solves a system of linear equations at each timestep  
+- More computationally intensive but significantly more stable  
+
+---
+
+## Features
+
+- Cylindrical coordinate heat conduction model  
+- Internal heat generation term  
+- Convective boundary condition  
+- Comparison of explicit vs implicit schemes  
+- Visual outputs:
+  - Radial temperature distribution  
+  - 2D heatmaps  
+  - Time evolution animation (MP4)
+
+---
+
+## Project Structure
+
+## Project Structure
+
+heat-transfer-simulation-python/
+│── explicit_solver.py        # Explicit finite difference implementation
+│── crank_nicolson_solver.py  # Implicit Crank–Nicolson implementation
+│── Temperature_Distribution.mp4  # Animation output
+│── README.md
+
+## How to Run 
+### 1. Install dependencies
+pip install numpy matplotlib
+python explicit_solver.py
+python crank_nicolson_solver.py
