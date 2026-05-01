@@ -50,16 +50,37 @@ The project demonstrates how different numerical schemes affect **stability, acc
 
 ## Project Structure
 
-## Project Structure
-
 heat-transfer-simulation-python/
 │── explicit_solver.py        # Explicit finite difference implementation
 │── crank_nicolson_solver.py  # Implicit Crank–Nicolson implementation
 │── Temperature_Distribution.mp4  # Animation output
 │── README.md
 
-## How to Run 
-### 1. Install dependencies
+## How to Run
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/n-sya/Heat-Transfer-Visualisation-Python.git
+cd Heat-Transfer-Visualisation-Python
+```
+
+### 2. Install dependencies
+```bash
 pip install numpy matplotlib
+```
+
+### 3. Run the explicit solver
+```bash
 python explicit_solver.py
+```
+
+### 4. Run the Crank–Nicolson solver
+```bash
 python crank_nicolson_solver.py
+```
+
+### 5. Output
+The explicit solver generates:
+- radial temperature distribution plot
+- 2D heatmap of the temperature field
+- `Temperature_Distribution.mp4` animation
