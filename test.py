@@ -1,3 +1,4 @@
+import json
 import tkinter as tk
 import unittest
 
@@ -348,6 +349,116 @@ class TestFunctionalBehaviour(unittest.TestCase):
         self.assertTrue(np.all(np.isfinite(T_crank_nicolson)))
         self.assertLess(np.max(difference), 0.1)
 
+
+class TestJSONCases(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        with open("test_cases.json", "r", encoding="utf-8") as file:
+            test_data = json.load(file)
+
+        cls.test_cases = test_data["test_cases"]
+
+    def test_json_simulation_cases(self):
+        for case in self.test_cases:
+            with self.subTest(case=case["name"]):
+                solver_parameters = {
+                    "radius": case["radius"],
+                    "density": case["density"],
+                    "heat_capacity": case["heat_capacity"],
+                    "conductivity": case["conductivity"],
+                    "volumetric_heat_generation": (
+                        case["volumetric_heat_generation"]
+                    ),
+                    "initial_temp": case["initial_temp"],
+                    "ambient_temp": case["ambient_temp"],
+                    "convection_coefficient_value": (
+                        case["convection_coefficient_value"]
+                    ),
+                }
+
+                Fo = fourier_number(
+                    case["n_nodes"],
+                    case["dt"],
+                    radius=case["radius"],
+                    density=case["density"],
+                    heat_capacity=case["heat_capacity"],
+                    conductivity=case["conductivity"],
+                )
+
+                self.assertLessEqual(
+                    Fo,
+                    0.5,
+                    msg=(
+                        f'{case["name"]} has an unstable '
+                        f"Explicit configuration: Fo = {Fo:.4f}"
+                    ),
+                )
+
+                T_explicit, r_explicit, t_explicit = explicit_solver(
+                    case["n_nodes"],
+                    case["dt"],
+                    case["t_end"],
+                    **solver_parameters,
+                )
+
+                T_crank_nicolson, r_crank, t_crank = (
+                    crank_nicolson_solver(
+                        case["n_nodes"],
+                        case["dt"],
+                        case["t_end"],
+                        **solver_parameters,
+                    )
+                )
+
+                self.assertEqual(
+                    T_explicit.shape,
+                    T_crank_nicolson.shape,
+                )
+
+                self.assertEqual(
+                    len(r_explicit),
+                    case["n_nodes"],
+                )
+
+                self.assertTrue(
+                    np.allclose(r_explicit, r_crank)
+                )
+
+                self.assertTrue(
+                    np.allclose(t_explicit, t_crank)
+                )
+
+                self.assertTrue(
+                    np.all(np.isfinite(T_explicit))
+                )
+
+                self.assertTrue(
+                    np.all(np.isfinite(T_crank_nicolson))
+                )
+
+                self.assertTrue(
+                    np.allclose(
+                        T_explicit[0],
+                        case["initial_temp"],
+                    )
+                )
+
+                self.assertTrue(
+                    np.allclose(
+                        T_crank_nicolson[0],
+                        case["initial_temp"],
+                    )
+                )
+
+                self.assertGreater(
+                    T_explicit[-1, 0],
+                    case["initial_temp"],
+                )
+
+                self.assertGreater(
+                    T_crank_nicolson[-1, 0],
+                    case["initial_temp"],
+                )
 
 class TestGUI(unittest.TestCase):
     def setUp(self):
