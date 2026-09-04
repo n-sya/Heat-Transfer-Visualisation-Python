@@ -1,0 +1,74 @@
+{
+    "test_cases": [
+        {
+            "name": "default_case",
+            "radius": 0.001,
+            "density": 8400,
+            "heat_capacity": 450,
+            "conductivity": 11.3,
+            "volumetric_heat_generation": 1000000,
+            "initial_temp": 300,
+            "ambient_temp": 300,
+            "convection_coefficient_value": 50,
+            "n_nodes": 11,
+            "dt": 0.001,
+            "t_end": 10
+        },
+        {
+            "name": "high_conductivity",
+            "radius": 0.001,
+            "density": 8400,
+            "heat_capacity": 450,
+            "conductivity": 20,
+            "volumetric_heat_generation": 1000000,
+            "initial_temp": 300,
+            "ambient_temp": 300,
+            "convection_coefficient_value": 50,
+            "n_nodes": 11,
+            "dt": 0.0005,
+            "t_end": 10
+        },
+        {
+            "name": "high_heat_generation",
+            "radius": 0.001,
+            "density": 8400,
+            "heat_capacity": 450,
+            "conductivity": 11.3,
+            "volumetric_heat_generation": 2000000,
+            "initial_temp": 300,
+            "ambient_temp": 300,
+            "convection_coefficient_value": 50,
+            "n_nodes": 11,
+            "dt": 0.001,
+            "t_end": 10
+        },
+        {
+            "name": "strong_convection",
+            "radius": 0.001,
+            "density": 8400,
+            "heat_capacity": 450,
+            "conductivity": 11.3,
+            "volumetric_heat_generation": 1000000,
+            "initial_temp": 300,
+            "ambient_temp": 300,
+            "convection_coefficient_value": 200,
+            "n_nodes": 11,
+            "dt": 0.001,
+            "t_end": 10
+        },
+        {
+            "name": "fine_radial_grid",
+            "radius": 0.001,
+            "density": 8400,
+            "heat_capacity": 450,
+            "conductivity": 11.3,
+            "volumetric_heat_generation": 1000000,
+            "initial_temp": 300,
+            "ambient_temp": 300,
+            "convection_coefficient_value": 50,
+            "n_nodes": 21,
+            "dt": 0.0002,
+            "t_end": 10
+        }
+    ]
+}
