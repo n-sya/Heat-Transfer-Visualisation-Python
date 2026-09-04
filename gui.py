@@ -319,11 +319,56 @@ class HeatTransferGUI:
     def run_simulation(self):
         try:
             parameters = self.get_inputs()
-
         except ValueError as error:
             messagebox.showerror(
                 "Invalid Input",
                 str(error),
+            )
+            return
+
+        Fo = fourier_number(
+            parameters["n_nodes"],
+            parameters["dt"],
+            radius=parameters["radius"],
+            density=parameters["density"],
+            heat_capacity=parameters["heat_capacity"],
+            conductivity=parameters["conductivity"],
+        )
+
+        if Fo > 0.5:
+            thermal_diffusivity = (
+                parameters["conductivity"]
+                / (
+                    parameters["density"]
+                    * parameters["heat_capacity"]
+                )
+            )
+
+            dr = (
+                parameters["radius"]
+                / (parameters["n_nodes"] - 1)
+            )
+
+            maximum_dt = (
+                0.5
+                * dr**2
+                / thermal_diffusivity
+            )
+
+            messagebox.showerror(
+                "Unstable Explicit Configuration",
+                (
+                    "The selected inputs result in an unstable "
+                    "Explicit solution.\n\n"
+                    f"Fourier number: {Fo:.4f}\n"
+                    "Required stability condition: Fo ≤ 0.5\n\n"
+                    f"Reduce the time step to {maximum_dt:.6g} s "
+                    "or lower."
+                ),
+            )
+
+            self.status_label.config(
+                text="Simulation not run: Explicit stability limit exceeded."
             )
             return
 
@@ -361,26 +406,18 @@ class HeatTransferGUI:
 
         self.parameters = parameters
 
-        Fo = fourier_number(
-            parameters["n_nodes"],
-            parameters["dt"],
-            radius=parameters["radius"],
-            density=parameters["density"],
-            heat_capacity=parameters["heat_capacity"],
-            conductivity=parameters["conductivity"],
-        )
-
         maximum_difference = np.max(
-            np.abs(self.T_explicit[-1] - self.T_crank_nicolson[-1])
+            np.abs(
+                self.T_explicit[-1]
+                - self.T_crank_nicolson[-1]
+            )
         )
-
-        stability_status = "Stable" if Fo <= 0.5 else "Stability limit exceeded"
 
         self.status_label.config(
             text=(
                 f"Simulation complete\n\n"
                 f"Fourier number: {Fo:.4f}\n"
-                f"Explicit scheme: {stability_status}\n\n"
+                f"Explicit scheme: Stable\n\n"
                 f"Explicit centre: {self.T_explicit[-1, 0]:.3f} K\n"
                 f"Crank-Nicolson centre: "
                 f"{self.T_crank_nicolson[-1, 0]:.3f} K\n\n"
@@ -407,7 +444,8 @@ class HeatTransferGUI:
         self.clear_tab(self.comparison_tab)
 
         temperature_difference = np.abs(
-            self.T_explicit[-1] - self.T_crank_nicolson[-1]
+            self.T_explicit[-1]
+            - self.T_crank_nicolson[-1]
         )
 
         figure, ax = plt.subplots(
