@@ -179,7 +179,7 @@ The two numerical methods can be compared directly to assess agreement between t
 ## Repository Structure
 
 ```text
-Heat-Transfer-Visualisation-Python/
+Transient-Heat-Conduction-FDM/
 ├── archive/
 │   ├── crank_nicolson_solver.py
 │   └── explicit_solver.py
