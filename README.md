@@ -60,16 +60,7 @@ $$
 giving
 
 $$
-\frac{\partial T}{\partial t}
-=
-\alpha
-\left(
-\frac{\partial^2 T}{\partial r^2}
-+
-\frac{1}{r}\frac{\partial T}{\partial r}
-\right)
-+
-\frac{\dot{q}}{\rho c_p}
+\frac{\partial T}{\partial t}=\alpha\left(\frac{\partial^2 T}{\partial r^2}+\frac{1}{r}\frac{\partial T}{\partial r}\right)+\frac{\dot{q}}{\rho c_p}
 $$
 
 ### Initial Condition
@@ -85,10 +76,7 @@ $$
 Symmetry at the centre of the cylinder requires
 
 $$
-\left.
-\frac{\partial T}{\partial r}
-\right|_{r=0}
-=0
+\left.\frac{\partial T}{\partial r}\right|_{r=0}=0
 $$
 
 ### Surface Boundary Condition
@@ -96,12 +84,7 @@ $$
 At the outer surface, heat is transferred to the surroundings through convection:
 
 $$
--k
-\left.
-\frac{\partial T}{\partial r}
-\right|_{r=R}
-=
-h(T_s-T_\infty)
+-k\left.\frac{\partial T}{\partial r}\right|_{r=R}=h(T_s-T_\infty)
 $$
 
 where $h$ is the convection coefficient and $T_\infty$ is the ambient temperature.
