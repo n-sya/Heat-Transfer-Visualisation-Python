@@ -38,16 +38,7 @@ An interactive Tkinter GUI provides control over the physical, thermal, and nume
 For axisymmetric radial conduction with constant material properties, the governing equation is
 
 $$
-\rho c_p \frac{\partial T}{\partial t}
-=
-k
-\left(
-\frac{\partial^2 T}{\partial r^2}
-+
-\frac{1}{r}\frac{\partial T}{\partial r}
-\right)
-+
-\dot{q}
+\rho c_p \frac{\partial T}{\partial t} = k \left( \frac{\partial^2 T}{\partial r^2} + \frac{1}{r}\frac{\partial T}{\partial r} \right) + \dot{q}
 $$
 
 where:
