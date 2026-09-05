@@ -563,27 +563,41 @@ $$
 where
 
 $$
-\mathbf{T}^{n+1} = \begin{bmatrix} T_0^{n+1} \\ T_1^{n+1} \\ \vdots \\ T_{N-2}^{n+1} \\ T_{N-1}^{n+1} \end{bmatrix}
+\mathbf{T}^{n+1} =
+\begin{bmatrix}
+T_0^{n+1} \\
+T_1^{n+1} \\
+\vdots \\
+T_{N-2}^{n+1} \\
+T_{N-1}^{n+1}
+\end{bmatrix}
 $$
 
 The coefficient matrix has the general form
 
 $$
-A = \begin{bmatrix} 1+2Fo & -2Fo & 0 & \cdots & 0 \\ a_1 & b_1 & c_1 & \cdots & 0 \\ 0 & a_2 & b_2 & \ddots & \vdots \\ \vdots & \ddots & \ddots & \ddots & c_{N-2} \\ 0 & \cdots & 0 & \frac{k}{\Delta r} & -\frac{k}{\Delta r}-h \end{bmatrix}
+A =
+\begin{bmatrix}
+1+2Fo & -2Fo & 0 & \cdots & 0 \\
+a_1 & b_1 & c_1 & \cdots & 0 \\
+0 & a_2 & b_2 & \ddots & \vdots \\
+\vdots & \ddots & \ddots & \ddots & c_{N-2} \\
+0 & \cdots & 0 & \frac{k}{\Delta r} & -\frac{k}{\Delta r}-h
+\end{bmatrix}
 $$
 
 where the interior coefficients are
 
 $$
-a_j = -\frac{\alpha\Delta t}{2\Delta r^2}+\frac{\alpha\Delta t}{4r_j\Delta r}
+a_j = -\frac{\alpha\Delta t}{2\Delta r^2} + \frac{\alpha\Delta t}{4r_j\Delta r}
 $$
 
 $$
-b_j = 1+\frac{\alpha\Delta t}{\Delta r^2}
+b_j = 1 + \frac{\alpha\Delta t}{\Delta r^2}
 $$
 
 $$
-c_j = -\frac{\alpha\Delta t}{2\Delta r^2}-\frac{\alpha\Delta t}{4r_j\Delta r}
+c_j = -\frac{\alpha\Delta t}{2\Delta r^2} - \frac{\alpha\Delta t}{4r_j\Delta r}
 $$
 
 The system is solved at every time step using
