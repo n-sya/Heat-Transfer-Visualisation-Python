@@ -12,7 +12,7 @@ from visualisation import (
 
 # Numerical parameters
 n_nodes = 11
-dt = 0.001
+dt = 0.0008
 t_end = 130
 
 # Run solvers

@@ -394,7 +394,13 @@ $$
 \right|_{r=0}
 $$
 
-The centreline curvature is approximated by
+Using a symmetric ghost node,
+
+$$
+T_{-1}^n=T_1^n
+$$
+
+the centreline curvature is approximated by
 
 $$
 \left.
@@ -402,13 +408,37 @@ $$
 \right|_{r=0}
 \approx
 \frac{
-T_1^n-T_0^n
+T_1^n-2T_0^n+T_{-1}^n
+}{
+\Delta r^2
+}
+=
+\frac{
+2(T_1^n-T_0^n)
 }{
 \Delta r^2
 }
 $$
 
-giving
+Therefore, the complete cylindrical spatial operator at the centreline becomes
+
+$$
+\left.
+\left(
+\frac{\partial^2 T}{\partial r^2}
++
+\frac{1}{r}\frac{\partial T}{\partial r}
+\right)
+\right|_{r=0}
+\approx
+\frac{
+4(T_1^n-T_0^n)
+}{
+\Delta r^2
+}
+$$
+
+The Explicit centreline update is therefore
 
 $$
 T_0^{n+1}
@@ -417,7 +447,7 @@ T_0^n
 +
 \Delta t
 \left[
-2\alpha
+4\alpha
 \frac{
 T_1^n-T_0^n
 }{
@@ -435,7 +465,7 @@ T_0^{n+1}
 =
 T_0^n
 +
-2Fo(T_1^n-T_0^n)
+4Fo(T_1^n-T_0^n)
 +
 S\Delta t
 $$
@@ -445,9 +475,9 @@ or
 $$
 T_0^{n+1}
 =
-(1-2Fo)T_0^n
+(1-4Fo)T_0^n
 +
-2FoT_1^n
+4FoT_1^n
 +
 S\Delta t
 $$
@@ -536,35 +566,59 @@ This expression is used to calculate the outer-surface temperature in the Explic
 
 The Explicit method is conditionally stable.
 
-For the implemented discretisation, the Fourier number is required to satisfy
+For the interior radial nodes, the Explicit formulation gives the stability restriction
 
 $$
 Fo\leq0.5
 $$
 
-where
+However, the centreline update is
+
+$$
+T_0^{n+1}
+=
+(1-4Fo)T_0^n
++
+4FoT_1^n
++
+S\Delta t
+$$
+
+For the coefficient of $T_0^n$ to remain non-negative,
+
+$$
+1-4Fo\geq0
+$$
+
+and therefore
+
+$$
+Fo\leq0.25
+$$
+
+The centreline condition is more restrictive than the interior-node condition and therefore determines the stability limit used by the Explicit solver.
+
+Since
 
 $$
 Fo=
 \frac{\alpha\Delta t}{\Delta r^2}
 $$
 
-This can also be expressed as a maximum allowable time step.
-
-Starting from
+the stability requirement can be written as
 
 $$
 \frac{\alpha\Delta t}{\Delta r^2}
 \leq
-0.5
+0.25
 $$
 
-gives
+giving
 
 $$
 \Delta t
 \leq
-\frac{0.5\Delta r^2}{\alpha}
+\frac{0.25\Delta r^2}{\alpha}
 $$
 
 Therefore,
@@ -573,14 +627,14 @@ $$
 \boxed{
 \Delta t_{\max}
 =
-\frac{0.5\Delta r^2}{\alpha}
+\frac{0.25\Delta r^2}{\alpha}
 }
 $$
 
 The GUI evaluates the Fourier number before running either numerical solver. If
 
 $$
-Fo>0.5
+Fo>0.25
 $$
 
 the simulation is stopped and the user is informed of the maximum permissible time step.
@@ -770,54 +824,131 @@ T_{j+1}^n
 S\Delta t
 $$
 
-## 12. Crank-Nicolson Centreline Boundary
+## 12. Crank-Nicolson Centreline Treatment
 
-The centreline symmetry condition is
+At the centreline, the cylindrical spatial operator becomes
 
 $$
 \left.
-\frac{\partial T}{\partial r}
-\right|_{r=0}=0
+\left(
+\frac{\partial^2 T}{\partial r^2}
++
+\frac{1}{r}\frac{\partial T}{\partial r}
+\right)
+\right|_{r=0}
+\approx
+\frac{
+4(T_1-T_0)
+}{
+\Delta r^2
+}
 $$
 
-Using a forward difference,
+The governing equation at the centreline is therefore
+
+$$
+\frac{\partial T_0}{\partial t}
+=
+4\alpha
+\frac{
+T_1-T_0
+}{
+\Delta r^2
+}
++
+S
+$$
+
+Applying the Crank-Nicolson method gives
 
 $$
 \frac{
+T_0^{n+1}-T_0^n
+}{
+\Delta t
+}
+=
+\frac{1}{2}
+\left[
+4\alpha
+\frac{
 T_1^{n+1}-T_0^{n+1}
 }{
-\Delta r
+\Delta r^2
 }
-=0
++
+4\alpha
+\frac{
+T_1^n-T_0^n
+}{
+\Delta r^2
+}
+\right]
++
+S
 $$
 
-Therefore,
+Using
 
 $$
-T_1^{n+1}=T_0^{n+1}
+Fo=
+\frac{\alpha\Delta t}{\Delta r^2}
 $$
 
-or
+gives
 
 $$
-T_0^{n+1}-T_1^{n+1}=0
+T_0^{n+1}-T_0^n
+=
+2Fo
+\left[
+T_1^{n+1}-T_0^{n+1}
++
+T_1^n-T_0^n
+\right]
++
+S\Delta t
 $$
 
-This produces the first matrix row
+Collecting the unknown terms at time level $n+1$ gives
 
 $$
-A_{0,0}=1
+(1+2Fo)T_0^{n+1}
+-
+2FoT_1^{n+1}
+=
+T_0^n
++
+2Fo(T_1^n-T_0^n)
++
+S\Delta t
 $$
 
-$$
-A_{0,1}=-1
-$$
-
-with
+Therefore, the first matrix row contains
 
 $$
-b_0=0
+A_{0,0}=1+2Fo
 $$
+
+and
+
+$$
+A_{0,1}=-2Fo
+$$
+
+with the right-hand side
+
+$$
+b_0
+=
+T_0^n
++
+2Fo(T_1^n-T_0^n)
++
+S\Delta t
+$$
+
+This allows the centreline temperature to evolve according to the governing heat equation while satisfying the cylindrical symmetry condition.
 
 ## 13. Crank-Nicolson Surface Boundary
 
@@ -894,7 +1025,7 @@ $$
 
 ## 14. Matrix System
 
-Combining the centreline boundary condition, interior-node equations, and surface boundary condition produces a linear system
+Combining the centreline treatment, interior-node equations, and surface boundary condition produces a linear system
 
 $$
 A\mathbf{T}^{n+1}
@@ -921,7 +1052,7 @@ The coefficient matrix has the general form
 $$
 A=
 \begin{bmatrix}
-1 & -1 & 0 & \cdots & 0 \\
+1+2Fo & -2Fo & 0 & \cdots & 0 \\
 a_1 & b_1 & c_1 & \cdots & 0 \\
 0 & a_2 & b_2 & \ddots & \vdots \\
 \vdots & \ddots & \ddots & \ddots & c_{N-2} \\

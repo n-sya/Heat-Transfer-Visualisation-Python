@@ -59,9 +59,9 @@ class TestCalculations(unittest.TestCase):
         )
 
     def test_default_fourier_number_is_stable(self):
-        Fo = fourier_number(11, 0.001)
+        Fo = fourier_number(11, 0.0008)
 
-        self.assertLessEqual(Fo, 0.5)
+        self.assertLessEqual(Fo, 0.25)
 
     def test_larger_time_step_increases_fourier_number(self):
         smaller_time_step = fourier_number(11, 0.001)
@@ -72,7 +72,7 @@ class TestCalculations(unittest.TestCase):
     def test_explicit_solver_output_shape(self):
         T, r, t = explicit_solver(
             n_nodes=11,
-            dt=0.001,
+            dt=0.0008,
             t_end=1.0,
         )
 
@@ -82,7 +82,7 @@ class TestCalculations(unittest.TestCase):
     def test_explicit_initial_condition(self):
         T, _, _ = explicit_solver(
             n_nodes=11,
-            dt=0.001,
+            dt=0.0008,
             t_end=0.01,
         )
 
@@ -96,7 +96,7 @@ class TestCalculations(unittest.TestCase):
     def test_explicit_temperatures_are_finite(self):
         T, _, _ = explicit_solver(
             n_nodes=11,
-            dt=0.001,
+            dt=0.0008,
             t_end=1.0,
         )
 
@@ -105,7 +105,7 @@ class TestCalculations(unittest.TestCase):
     def test_explicit_temperature_rises(self):
         T, _, _ = explicit_solver(
             n_nodes=11,
-            dt=0.001,
+            dt=0.0008,
             t_end=1.0,
         )
 
@@ -117,7 +117,7 @@ class TestCalculations(unittest.TestCase):
     def test_explicit_centre_hotter_than_surface(self):
         T, _, _ = explicit_solver(
             n_nodes=11,
-            dt=0.001,
+            dt=0.0008,
             t_end=5.0,
         )
 
@@ -159,18 +159,16 @@ class TestCalculations(unittest.TestCase):
 
         self.assertTrue(np.all(np.isfinite(T)))
 
-    def test_crank_nicolson_centreline_symmetry(self):
+    def test_crank_nicolson_centre_hotter_than_adjacent_node(self):
         T, _, _ = crank_nicolson_solver(
             n_nodes=11,
             dt=0.01,
             t_end=1.0,
         )
 
-        self.assertTrue(
-            np.allclose(
-                T[:, 0],
-                T[:, 1],
-            )
+        self.assertGreaterEqual(
+            T[-1, 0],
+            T[-1, 1],
         )
 
     def test_crank_nicolson_temperature_rises(self):
@@ -201,7 +199,7 @@ class TestCalculations(unittest.TestCase):
 class TestFunctionalBehaviour(unittest.TestCase):
     def test_explicit_and_crank_nicolson_are_similar(self):
         n_nodes = 11
-        dt = 0.001
+        dt = 0.0008
         t_end = 5.0
 
         T_explicit, r_explicit, t_explicit = explicit_solver(
@@ -245,7 +243,7 @@ class TestFunctionalBehaviour(unittest.TestCase):
     def test_temperature_distribution_is_symmetric(self):
         T, r, _ = explicit_solver(
             n_nodes=11,
-            dt=0.001,
+            dt=0.0008,
             t_end=1.0,
         )
 
@@ -280,13 +278,13 @@ class TestFunctionalBehaviour(unittest.TestCase):
     def test_modified_conductivity_changes_solution(self):
         default_T, _, _ = explicit_solver(
             n_nodes=11,
-            dt=0.001,
+            dt=0.0004,
             t_end=1.0,
         )
 
         modified_T, _, _ = explicit_solver(
             n_nodes=11,
-            dt=0.001,
+            dt=0.0004,
             t_end=1.0,
             conductivity=thermal_conductivity * 2,
         )
@@ -300,7 +298,7 @@ class TestFunctionalBehaviour(unittest.TestCase):
 
     def test_complete_simulation_workflow(self):
         n_nodes = 11
-        dt = 0.001
+        dt = 0.0008
         t_end = 1.0
 
         T_explicit, r_explicit, t_explicit = explicit_solver(
@@ -344,7 +342,7 @@ class TestFunctionalBehaviour(unittest.TestCase):
             )
         )
 
-        self.assertLessEqual(Fo, 0.5)
+        self.assertLessEqual(Fo, 0.25)
         self.assertTrue(np.all(np.isfinite(T_explicit)))
         self.assertTrue(np.all(np.isfinite(T_crank_nicolson)))
         self.assertLess(np.max(difference), 0.1)
@@ -387,7 +385,7 @@ class TestJSONCases(unittest.TestCase):
 
                 self.assertLessEqual(
                     Fo,
-                    0.5,
+                    0.25,
                     msg=(
                         f'{case["name"]} has an unstable '
                         f"Explicit configuration: Fo = {Fo:.4f}"
@@ -460,6 +458,7 @@ class TestJSONCases(unittest.TestCase):
                     case["initial_temp"],
                 )
 
+
 class TestGUI(unittest.TestCase):
     def setUp(self):
         self.root = tk.Tk()
@@ -480,22 +479,27 @@ class TestGUI(unittest.TestCase):
             parameters["radius"],
             wire_radius,
         )
+
         self.assertAlmostEqual(
             parameters["density"],
             rho,
         )
+
         self.assertAlmostEqual(
             parameters["heat_capacity"],
             specific_heat,
         )
+
         self.assertAlmostEqual(
             parameters["conductivity"],
             thermal_conductivity,
         )
+
         self.assertAlmostEqual(
             parameters["initial_temp"],
             initial_temperature,
         )
+
         self.assertAlmostEqual(
             parameters["ambient_temp"],
             ambient_temperature,
@@ -505,10 +509,12 @@ class TestGUI(unittest.TestCase):
             parameters["n_nodes"],
             11,
         )
+
         self.assertAlmostEqual(
             parameters["dt"],
-            0.001,
+            0.0008,
         )
+
         self.assertAlmostEqual(
             parameters["t_end"],
             130.0,
@@ -602,16 +608,19 @@ class TestGUI(unittest.TestCase):
                 temperature_field[0, 0]
             )
         )
+
         self.assertTrue(
             np.isnan(
                 temperature_field[0, -1]
             )
         )
+
         self.assertTrue(
             np.isnan(
                 temperature_field[-1, 0]
             )
         )
+
         self.assertTrue(
             np.isnan(
                 temperature_field[-1, -1]

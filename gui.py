@@ -147,7 +147,7 @@ class HeatTransferGUI:
         row += 1
         self.dt_entry = self.create_entry(
             "Time step (s)",
-            0.001,
+            0.0008,
             row,
         )
 
@@ -335,7 +335,7 @@ class HeatTransferGUI:
             conductivity=parameters["conductivity"],
         )
 
-        if Fo > 0.5:
+        if Fo > 0.25:
             thermal_diffusivity = (
                 parameters["conductivity"]
                 / (
@@ -350,7 +350,7 @@ class HeatTransferGUI:
             )
 
             maximum_dt = (
-                0.5
+                0.25
                 * dr**2
                 / thermal_diffusivity
             )
@@ -361,7 +361,7 @@ class HeatTransferGUI:
                     "The selected inputs result in an unstable "
                     "Explicit solution.\n\n"
                     f"Fourier number: {Fo:.4f}\n"
-                    "Required stability condition: Fo ≤ 0.5\n\n"
+                    "Required stability condition: Fo ≤ 0.25\n\n"
                     f"Reduce the time step to {maximum_dt:.6g} s "
                     "or lower."
                 ),

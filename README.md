@@ -132,8 +132,10 @@ $$
 with the stability requirement
 
 $$
-Fo \leq 0.5
+Fo \leq 0.25
 $$
+
+The centreline node imposes the most restrictive stability condition for the cylindrical formulation used in this model.
 
 The GUI evaluates this condition before running the simulation. If the selected parameters exceed the stability limit, the simulation is stopped and the maximum allowable time step is reported.
 

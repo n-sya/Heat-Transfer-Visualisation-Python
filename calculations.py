@@ -49,7 +49,7 @@ def explicit_solver(
 
         # Centreline symmetry boundary condition
         T[n, 0] = previous_T[0] + dt * (
-            2
+            4
             * thermal_diffusivity
             * (previous_T[1] - previous_T[0])
             / dr**2
@@ -107,8 +107,10 @@ def crank_nicolson_solver(
     A = np.zeros((n_nodes, n_nodes))
 
     # Centreline symmetry boundary condition
-    A[0, 0] = 1
-    A[0, 1] = -1
+    centre_coefficient = thermal_diffusivity * dt / dr**2
+
+    A[0, 0] = 1 + 2 * centre_coefficient
+    A[0, 1] = -2 * centre_coefficient
 
     # Interior nodes
     for j in range(1, n_nodes - 1):
@@ -137,7 +139,13 @@ def crank_nicolson_solver(
         b = np.zeros(n_nodes)
 
         # Centreline symmetry boundary condition
-        b[0] = 0
+        b[0] = (
+            previous_T[0]
+            + 2
+            * centre_coefficient
+            * (previous_T[1] - previous_T[0])
+            + source_term * dt
+        )
 
         # Interior nodes
         for j in range(1, n_nodes - 1):
