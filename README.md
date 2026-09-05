@@ -228,7 +228,7 @@ Contains simulation configurations used for data-driven functional testing.
 
 Contains the mathematical derivation of the finite difference equations implemented by the numerical solvers.
 
-### `archive/`
+### `archive`
 
 Preserves the original solver implementations developed before the project was restructured.
 
